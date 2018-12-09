@@ -46,6 +46,7 @@ class Game extends React.Component {
     this.state = {
       history: [{
         squares: Array(9).fill(null),
+        location: null,
       }],
       xIsNext: true,
       stepNumber: 0,
@@ -56,13 +57,18 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    
+    // 判断赢家
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
+    
     squares[i] = this.state.xIsNext ? 'X' : 'O';
+    
     this.setState({
       history: history.concat([{ //concat()把原数组复制一个新数组，然后操作，故不改变原数组的值
         squares: squares,
+        location: [Math.floor(i / 3) + 1, i % 3 + 1],
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -81,11 +87,13 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {//参数意义：当前元素、当前元素的索引、数组本身
       const desc = move ?
-        'Go to move #' + move :
+        'Go to move #' + move + '(' + step.location[0] + ',' + step.location[1] + ')':
         'Go to game start';
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button
+            onClick={() => this.jumpTo(move)}
+          >{desc}</button>
         </li>
       );
     });

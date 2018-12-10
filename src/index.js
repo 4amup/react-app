@@ -57,6 +57,7 @@ class Game extends React.Component {
     const history = this.state.history.slice(0, this.state.stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
+    const location = [ i % 3 + 1, Math.floor(i / 3) + 1];//点选格子的坐标(col,row)
     
     // 判断赢家
     if (calculateWinner(squares) || squares[i]) {
@@ -68,7 +69,7 @@ class Game extends React.Component {
     this.setState({
       history: history.concat([{ //concat()把原数组复制一个新数组，然后操作，故不改变原数组的值
         squares: squares,
-        location: [Math.floor(i / 3) + 1, i % 3 + 1],
+        location: location,
       }]),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
@@ -87,12 +88,14 @@ class Game extends React.Component {
 
     const moves = history.map((step, move) => {//参数意义：当前元素、当前元素的索引、数组本身
       const desc = move ?
-        'Go to move #' + move + '(' + step.location[0] + ',' + step.location[1] + ')':
+        'Go to move #' + move + ',Location:(' + step.location[0] + ',' + step.location[1] + ')':
         'Go to game start';
       return (
         <li key={move}>
           <button
             onClick={() => this.jumpTo(move)}
+            // 02 使用style直接表示，判断是否是当前点击的步骤
+            style = {{fontWeight:(move === this.state.stepNumber) ? "bolder" : "normal"}}
           >{desc}</button>
         </li>
       );

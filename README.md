@@ -8,14 +8,18 @@ Display the location for each move in the format (col, row) in the move history 
 1. 位置号/3，整数部分是行坐标，余数部分是列坐标。
 ### Bold current item
 
-Bold the currently selected item in the move list.
+Bold the currently selected item in the move list.<br>
 **思路：**
 1. 使用style直接表示
-2. 使用添加className，在css中写具体样式，优点是样式分离
+2. ~~使用添加className，在css中写具体样式，优点是样式分离~~
 
 ### Double loop
 
-Rewrite Board to use two loops to make the squares instead of hardcoding them.
+Rewrite Board to use two loops to make the squares instead of hardcoding them.<br>
+**思路：**
+1. 使用map
+2. 使用for循环
+3. 两个循环，不一定是嵌套循环，map或者for皆可实现
 
 ### Sort
 

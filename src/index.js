@@ -13,6 +13,7 @@ function Square(props) {
 class Board extends React.Component {
   renderSquare(i) {
     return <Square
+      key = {i}
       value={this.props.squares[i]}
       onClick={() => this.props.onClick(i)}
     />;
@@ -25,7 +26,7 @@ class Board extends React.Component {
       for (let y = 0; y < 3; y++) {
         children.push(this.renderSquare(x*3+y));//实现累加
       }
-      boardRows.push(<div className="board-row">{children}</div>)
+      boardRows.push(<div key={x} className="board-row">{children}</div>)
     }
     return (
       <div>
@@ -45,6 +46,7 @@ class Game extends React.Component {
       }],
       xIsNext: true,
       stepNumber: 0,
+      ascending: true,
     }
   }
   // 监听方法
@@ -75,6 +77,11 @@ class Game extends React.Component {
       stepNumber: step,
       xIsNext: (step % 2) === 0,
     });
+  }
+  sortMoveList() {
+    this.setState({
+      ascending: this.state.ascending ? false : true,
+    })
   }
   render() {
     const history = this.state.history;
@@ -110,6 +117,11 @@ class Game extends React.Component {
           />
         </div>
         <div className="game-info">
+          <label>排序切换：</label>
+          <button
+            onClick = {() => this.sortMoveList()}
+          >toggle to {this.state.ascending ? 'ascending' : 'descending'}
+          </button>
           <div>{status}</div>
           <ol>{moves}</ol>
         </div>

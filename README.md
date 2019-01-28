@@ -28,6 +28,9 @@ Add a toggle button that lets you sort the moves in either ascending or descendi
 ### Hignlight squares
 
 When someone wins, highlight the three squares that caused the win.
+**思路**
+1. 在game组件中设置winner对象，包含胜利方和胜利格子index数组两个属性
+2. 以后将变量名称再规范一下
 
 ### Display draw
 

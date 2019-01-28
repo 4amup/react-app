@@ -4,7 +4,11 @@ import './index.css';
 
 function Square(props) {
   return (
-    <button className="square" onClick={props.onClick}>
+    <button
+    className = "square"
+    style = {{backgroundColor:( props.lightFlag ? 'yellow' : '' )}}
+    onClick = {props.onClick}
+    >
       {props.value}
     </button>
   );
@@ -15,6 +19,7 @@ class Board extends React.Component {
     return <Square
       key = {i}
       value={this.props.squares[i]}
+      lightFlag = {this.props.causewin.indexOf(i) !== -1 ? true : false}
       onClick={() => this.props.onClick(i)}
     />;
   }
@@ -22,11 +27,11 @@ class Board extends React.Component {
   render() {
     const boardRows = [];
     for (let x = 0; x < 3; x++) {
-      const children = [];
+      const squares = [];
       for (let y = 0; y < 3; y++) {
-        children.push(this.renderSquare(x*3+y));//实现累加
+        squares.push(this.renderSquare(x*3+y));//实现累加
       }
-      boardRows.push(<div key={x} className="board-row">{children}</div>)
+      boardRows.push(<div key={x} className="board-row">{squares}</div>)
     }
     return (
       <div>
@@ -43,7 +48,13 @@ class Game extends React.Component {
       history: [{
         squares: Array(9).fill(null),
         location: null,
+        winner: null,
+        causewin: Array(3).fill(null),
       }],
+      winner: {
+        who: null,
+        causewin: Array(3).fill(null),
+      },
       xIsNext: true,
       stepNumber: 0,
       ascending: true,
@@ -57,17 +68,20 @@ class Game extends React.Component {
     const location = [ i % 3 + 1, Math.floor(i / 3) + 1];//点选格子的坐标(col,row)
     
     // 判断赢家
-    if (calculateWinner(squares) || squares[i]) {
+    if (calculateWinner(squares).who || squares[i]) {
       return;
     }
     
     squares[i] = this.state.xIsNext ? 'X' : 'O';
-    
+
     this.setState({
-      history: history.concat([{ //concat()把原数组复制一个新数组，然后操作，故不改变原数组的值
+      history: history.concat([{
         squares: squares,
         location: location,
+        winner: calculateWinner(squares).who,
+        causewin: calculateWinner(squares).causewin,
       }]),
+      winner: calculateWinner(squares),
       stepNumber: history.length,
       xIsNext: !this.state.xIsNext,
     });
@@ -86,7 +100,8 @@ class Game extends React.Component {
   render() {
     const history = this.state.history;
     const current = history[this.state.stepNumber];
-    const winner = calculateWinner(current.squares);
+    const winner = current.winner;
+    const causewin = current.causewin;
 
     const moves = history.map((step, move) => {//参数意义：当前元素、当前元素的索引、数组本身
       const desc = move ?
@@ -104,7 +119,7 @@ class Game extends React.Component {
     });
     let status;
     if (winner) {
-      status = 'Winner: ' + winner;
+      status = `winner:${winner}, cause win is ${causewin}`;
     } else {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
     }
@@ -114,6 +129,7 @@ class Game extends React.Component {
           <Board
             squares={current.squares}
             onClick={(i) => this.handleClick(i)}
+            causewin={current.causewin}
           />
         </div>
         <div className="game-info">
@@ -148,10 +164,17 @@ function calculateWinner(squares) {
   for (let i = 0; i < lines.length; i++) {
     const [a, b, c] = lines[i];
     if (squares[a] && squares[a] === squares[b] && squares[a] === squares[c]) {
-      return squares[a];//返回的就是winner
+      // return squares[a];//返回的就是winner
+      return {
+        who: squares[a],
+        causewin: [a, b, c],
+      }
     }
   }
-  return null;
+  return {
+    who: null,
+    causewin: Array(3).fill(null),
+  };
 }
 
 // ========================================

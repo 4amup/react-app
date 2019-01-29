@@ -51,10 +51,6 @@ class Game extends React.Component {
         winner: null,
         causewin: Array(3).fill(null),
       }],
-      winner: {
-        who: null,
-        causewin: Array(3).fill(null),
-      },
       xIsNext: true,
       stepNumber: 0,
       ascending: true,
@@ -102,7 +98,8 @@ class Game extends React.Component {
     const current = history[this.state.stepNumber];
     const winner = current.winner;
     const causewin = current.causewin;
-
+    
+    // 移动步骤
     const moves = history.map((step, move) => {//参数意义：当前元素、当前元素的索引、数组本身
       const desc = move ?
         'Go to move #' + move + ',Location:(' + step.location[0] + ',' + step.location[1] + ')':
@@ -117,12 +114,18 @@ class Game extends React.Component {
         </li>
       );
     });
+    
+    // 当前状态
     let status;
     if (winner) {
-      status = `winner:${winner}, cause win is ${causewin}`;
-    } else {
+      status = `Winner:${winner}, cause win is ${causewin}`;
+    } else if (this.state.stepNumber < 9) {
       status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
+    } else if (this.state.stepNumber >= 9) {
+      status = `Result is draw!`;
     }
+
+    // html生成
     return (
       <div className="game">
         <div className="game-board">
